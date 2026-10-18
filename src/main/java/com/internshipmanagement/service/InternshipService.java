@@ -2,16 +2,26 @@ package com.internshipmanagement.service;
 
 import com.internshipmanagement.dao.*;
 import com.internshipmanagement.entity.Internship;
+import com.internshipmanagement.entity.DeadlineFilter;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 
 public class InternshipService {
     private final InternshipDAO dao;
     private final CompanyDAO companies;
-    public InternshipService(InternshipDAO dao, CompanyDAO companies) { this.dao = dao; this.companies = companies; }
+    private final Clock clock;
+    public InternshipService(InternshipDAO dao, CompanyDAO companies) { this(dao, companies, Clock.systemDefaultZone()); }
+    public InternshipService(InternshipDAO dao, CompanyDAO companies, Clock clock) {
+        this.dao = dao; this.companies = companies; this.clock = clock;
+    }
     public List<Internship> getAllInternships() { return dao.findAll(); }
     public List<Internship> getInternshipsByCompany(Long id) { Validation.id(id); return dao.search("", id); }
     public List<Internship> searchInternships(String term) { return dao.search(term, null); }
     public List<Internship> searchInternships(String term, Long companyId) { return dao.search(term, companyId); }
+    public List<Internship> searchInternships(String term, Long companyId, DeadlineFilter deadline) {
+        return dao.search(term, companyId, deadline == null ? DeadlineFilter.ALL : deadline, LocalDate.now(clock));
+    }
     public Internship getInternshipById(Long id) {
         Validation.id(id);
         Internship i = dao.findById(id);

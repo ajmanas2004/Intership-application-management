@@ -1,12 +1,9 @@
 package com.internshipmanagement.view.dialog;
 
-import com.internshipmanagement.service.ValidationException;
 import com.internshipmanagement.view.Ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 public abstract class FormDialog extends JDialog {
     private final JPanel form = new JPanel(new GridBagLayout());
@@ -44,7 +41,8 @@ public abstract class FormDialog extends JDialog {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0; c.gridy = row; c.anchor = GridBagConstraints.NORTHWEST;
         c.insets = new Insets(6, 4, 6, 12);
-        form.add(new JLabel(label), c);
+        JLabel caption = new JLabel(label);
+        caption.setLabelFor(input); form.add(caption, c);
         c.gridx = 1; c.weightx = 1; c.fill = GridBagConstraints.HORIZONTAL;
         form.add(input, c); row++;
     }
@@ -55,13 +53,6 @@ public abstract class FormDialog extends JDialog {
         return a;
     }
 
-    protected static LocalDate date(JTextField field, String label) {
-        if (field.getText().isBlank()) return null;
-        try { return LocalDate.parse(field.getText().strip()); }
-        catch (DateTimeParseException e) { throw new ValidationException(label + " phải là ngày hợp lệ, dạng yyyy-MM-dd."); }
-    }
-
-    protected static String showDate(LocalDate value) { return value == null ? "" : value.toString(); }
     protected abstract Runnable saveAction();
 
     public boolean showDialog() {

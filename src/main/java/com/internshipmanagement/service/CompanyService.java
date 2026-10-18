@@ -9,6 +9,9 @@ public class CompanyService {
     public CompanyService(CompanyDAO dao) { this.dao = dao; }
     public List<Company> getAllCompanies() { return dao.findAll(); }
     public List<Company> searchCompanies(String term) { return dao.search(term); }
+    public List<Company> searchCompanies(String term, String industry, String location) {
+        return dao.search(term, industry, location);
+    }
     public Company getCompanyById(Long id) {
         Validation.id(id);
         Company c = dao.findById(id);

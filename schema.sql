@@ -1,4 +1,4 @@
--- MySQL 8+. Select/create internship_management before running this script.
+-- MySQL 8.4+. Select/create internship_management before running this script.
 CREATE TABLE IF NOT EXISTS companies (
  id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL,
  industry VARCHAR(100), location VARCHAR(255), website VARCHAR(255)

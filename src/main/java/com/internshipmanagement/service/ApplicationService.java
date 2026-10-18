@@ -19,6 +19,13 @@ public class ApplicationService {
     public List<Application> getAllApplications() { return dao.findAll(); }
     public List<Application> searchApplications(String term) { return dao.search(term, null); }
     public List<Application> searchApplications(String term, ApplicationStatus status) { return dao.search(term, status); }
+    public List<Application> searchApplications(String term, ApplicationStatus status, Long companyId, Long internshipId) {
+        return dao.search(term, status, companyId, internshipId);
+    }
+    /** Null means this internship has no application yet. */
+    public Application findApplicationByInternship(Long internshipId) {
+        Validation.id(internshipId); return dao.findByInternship(internshipId);
+    }
     public List<Application> getApplicationsByStatus(ApplicationStatus status) { return dao.search("", status); }
     public Application getApplicationById(Long id) {
         Validation.id(id);
@@ -28,8 +35,6 @@ public class ApplicationService {
     }
     public void createApplication(Application a) {
         validate(a);
-        if (a.getStatus() != ApplicationStatus.SAVED && a.getStatus() != ApplicationStatus.APPLIED)
-            throw new ValidationException("Đơn mới chỉ có trạng thái Đã lưu hoặc Đã ứng tuyển.");
         if (dao.existsForInternship(a.getInternshipId())) throw new ValidationException("Vị trí này đã có đơn ứng tuyển.");
         normalizeDate(a, true);
         LocalDateTime now = LocalDateTime.now(clock).withNano(0);
@@ -40,8 +45,6 @@ public class ApplicationService {
         Application old = getApplicationById(a.getId());
         if (!Objects.equals(old.getInternshipId(), a.getInternshipId()))
             throw new ValidationException("Không thể đổi vị trí của đơn đã tạo. Hãy tạo đơn mới cho vị trí khác.");
-        if (!old.getStatus().canTransitionTo(a.getStatus()))
-            throw new ValidationException("Không thể chuyển từ " + old.getStatus() + " sang " + a.getStatus() + ".");
         normalizeDate(a, old.getStatus() == ApplicationStatus.SAVED);
         a.setCreatedAt(old.getCreatedAt()); a.setUpdatedAt(LocalDateTime.now(clock).withNano(0));
         Validation.changed(dao.update(a, old.getStatus()));
@@ -60,7 +63,7 @@ public class ApplicationService {
     }
     private void normalizeDate(Application a, boolean allowDefault) {
         if (a.getStatus() == ApplicationStatus.SAVED) {
-            if (a.getAppliedDate() != null) throw new ValidationException("Đơn Đã lưu chưa có ngày ứng tuyển.");
+            a.setAppliedDate(null);
         } else {
             if (a.getAppliedDate() == null && allowDefault) a.setAppliedDate(LocalDate.now(clock));
             if (a.getAppliedDate() == null) throw new ValidationException("Ngày ứng tuyển không được để trống.");
