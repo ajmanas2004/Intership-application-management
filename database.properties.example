@@ -1,0 +1,5 @@
+# Copy to database.properties (ignored by Git); environment variables take priority.
+db.url=jdbc:mysql://localhost:3306/internship_management?connectTimeout=5000&socketTimeout=15000&connectionTimeZone=Asia/Ho_Chi_Minh
+db.user=internship_app
+db.password=change-me
+
