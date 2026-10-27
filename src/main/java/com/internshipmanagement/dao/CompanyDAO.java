@@ -11,8 +11,15 @@ public class CompanyDAO {
 
     public List<Company> findAll() { return search(""); }
     public List<Company> search(String term) {
-        return jdbc.query("SELECT * FROM companies WHERE LOWER(name) LIKE LOWER(?) ESCAPE '!' ORDER BY name, id",
-                CompanyDAO::map, Jdbc.contains(term));
+        return search(term, null, null);
+    }
+    public List<Company> search(String term, String industry, String location) {
+        java.util.ArrayList<Object> values = new java.util.ArrayList<>();
+        values.add(Jdbc.contains(term));
+        String sql = "SELECT * FROM companies WHERE LOWER(name) LIKE LOWER(?) ESCAPE '!'";
+        if (industry != null && !industry.isBlank()) { sql += " AND industry=?"; values.add(industry); }
+        if (location != null && !location.isBlank()) { sql += " AND location=?"; values.add(location); }
+        return jdbc.query(sql + " ORDER BY name, id", CompanyDAO::map, values.toArray());
     }
     public Company findById(Long id) {
         return jdbc.query("SELECT * FROM companies WHERE id = ?", CompanyDAO::map, id).stream().findFirst().orElse(null);

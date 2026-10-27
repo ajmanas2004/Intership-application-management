@@ -3,6 +3,7 @@ package com.internshipmanagement.entity;
 public class Application {
     private Long id;
     private Long internshipId;
+    private Long companyId;
     private java.time.LocalDate appliedDate;
     private ApplicationStatus status;
     private String notes;
@@ -16,6 +17,9 @@ public class Application {
 
     public Long getInternshipId() { return internshipId; }
     public void setInternshipId(Long internshipId) { this.internshipId = internshipId; }
+
+    public Long getCompanyId() { return companyId; }
+    public void setCompanyId(Long companyId) { this.companyId = companyId; }
 
     public java.time.LocalDate getAppliedDate() { return appliedDate; }
     public void setAppliedDate(java.time.LocalDate appliedDate) { this.appliedDate = appliedDate; }
