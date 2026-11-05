@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.4.11
-    environment:
+    environment:,11323
       MYSQL_DATABASE: internship_management
       MYSQL_USER: internship_app
       MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
